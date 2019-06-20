@@ -6,7 +6,8 @@ import Home from "./Home";
 import Profile from "./Profile";
 import ListObat from "./ListObat";
 import TambahObat from "./TambahObat";
-
+import DetailObat from "./DetailObat";
+import UpdateObat from "./UpdateObat";
 
 const AppContainer = createStackNavigator(
   {
@@ -16,7 +17,8 @@ const AppContainer = createStackNavigator(
     Profile: Profile,
     ListObat: ListObat,
     TambahObat: TambahObat,
-
+    DetailObat: DetailObat,
+    UpdateObat: UpdateObat,
   },
   {
     initialRouteName: "Login"

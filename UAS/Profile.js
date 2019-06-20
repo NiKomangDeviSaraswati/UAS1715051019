@@ -78,7 +78,7 @@ class Profile extends Component {
             style={styles.buttonStyle}
             onPress={() => this.props.navigation.navigate("Home")}
           >
-            <Icon name="exit-to-app" color="black" size={24} />
+            <Icon name="home" color="black" size={24} />
             <Text style={styles.text2}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity

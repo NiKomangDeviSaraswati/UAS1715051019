@@ -18,7 +18,6 @@ class ListObat extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //kode_user: this.props.navigation.state.params.kode_user
     };
   }
   componentDidMount() {
@@ -50,25 +49,34 @@ class ListObat extends Component {
           <TouchableOpacity
             activeOpacity={0.5}
             style={styles.buttonStyle}
-            onPress={() => this.props.navigation.navigate("Login")}
+            onPress={() => this.props.navigation.navigate("Home")}
           >
-            <Icon name="exit-to-app" color="black" size={24} />
-            <Text style={styles.text2}>Logout</Text>
+            <Icon name="home" color="black" size={24} />
+            <Text style={styles.text2}>Home</Text>
           </TouchableOpacity>
         </View>
 
         <View>
-        <ListItem
+        <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            data={this.state.data}
+            renderItem={({ item }) => (
+              <ListItem
+              style={styles.list}
                 onPress={() =>
-                  this.props.navigation.navigate("DetailObat")
+                  this.props.navigation.navigate("DetailObat", {
+                    kode_obat: item.kode_obat
+                  })
                 }
-                title='Paracetamol'
+                title={item.nama_obat}
                 leftAvatar={{
                   source: {
                     uri:
-                      "https://deviundiksha.000webhostapp.com/apotik/img/paracetamol.jpg"
+                      "https://deviundiksha.000webhostapp.com/apotik/img/" +item.foto_obat
                   }
                 }}
+              />
+              )}
               />
         </View>
       </View>
@@ -137,13 +145,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "black"
   },
-  profile: {
-    //borderWidth: 1,
-    marginTop: 10,
-    marginLeft: 30,
-    marginRight: 30,
-    color: "#2196F3",
-    fontSize: 20
+  list:{
+    backgroundColor: "#FAFAD2",
   }
 });
 export default ListObat;

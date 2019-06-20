@@ -16,7 +16,7 @@ import QRCodeScanner from "react-native-qrcode-scanner";
 const axios = require("axios");
 import Header from "./Header";
 
-class TambahObat extends Component {
+class UpdateObat extends Component {
   static navigationOptions = {
     header: null
   };
@@ -32,35 +32,32 @@ class TambahObat extends Component {
       foto_obat: "",
       srcImg: "",
       uri: "",
-      fileName: "",
-      status: "Ready",
-      ModalVisibleStatus: false
+      fileName: ""
     };
   }
-  ShowModalFunction(visible) {
-    this.setState({ ModalVisibleStatus: visible });
-  }
-  onSuccess(e) {
+  componentDidMount() {
     this.setState({
-      kode_obat: e.data
+      kode_obat: this.props.navigation.state.params.kode_obat,
+      nama_obat: this.props.navigation.state.params.nama_obat,
+      jenis_obat: this.props.navigation.state.params.jenis_obat,
+      tanggal_expired: this.props.navigation.state.params.tanggal_expired,
+      stok_obat: this.props.navigation.state.params.stok_obat,
+      suplier_obat: this.props.navigation.state.params.suplier_obat,
+      foto_obat: this.props.navigation.state.params.foto_obat
     });
-    this.ShowModalFunction(!this.state.ModalVisibleStatus);
   }
   upload() {
     this.uploadPicture();
     axios
-      .post(
-        "https://deviundiksha.000webhostapp.com/apotik/tambahObat.php",
-        {
-          kode_obat: this.state.kode_obat,
-          nama_obat: this.state.nama_obat,
-          jenis_obat: this.state.jenis_obat,
-          tanggal_expired: this.state.tanggal_expired,
-          stok_obat: this.state.stok_obat,
-          suplier_obat: this.state.suplier_obat,
-          foto_obat: this.state.foto_obat
-        }
-      )
+      .post("https://deviundiksha.000webhostapp.com/apotik/updateObat.php", {
+        kode_obat: this.state.kode_obat,
+        nama_obat: this.state.nama_obat,
+        jenis_obat: this.state.jenis_obat,
+        tanggal_expired: this.state.tanggal_expired,
+        stok_obat: this.state.stok_obat,
+        suplier_obat: this.state.suplier_obat,
+        foto_obat: this.state.foto_obat
+      })
       .then(response => {
         console.log("Status  " + response);
         console.log(response);
@@ -129,68 +126,47 @@ class TambahObat extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header judul={"TAMBAH OBAT"} />
+        <Header judul={"Update Obat"} />
         <View style={styles.box1}>
           <TouchableOpacity onPress={this.choosePicture.bind(this)}>
             <View style={styles.image}>
-              {this.state.srcImg === null ? null : (
+              {this.state.srcImg ? (
                 <Image source={this.state.srcImg} style={styles.image} />
+              ) : (
+                <Image
+                  source={{
+                    uri:
+                      "https://deviundiksha.000webhostapp.com/apotik/img/" +
+                      this.state.foto_obat
+                  }}
+                  style={styles.image}
+                />
               )}
             </View>
           </TouchableOpacity>
-          <Modal
-                transparent={true}
-                animationType={"fade"}
-                visible={this.state.ModalVisibleStatus}
-                onRequestClose={() => {
-                  this.ShowModalFunction(!this.state.ModalVisibleStatus);
-                }}
-              >
-                <View
-                  style={{
-                    flex: 0,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <View style={styles.ModalInsideView}>
-                    <QRCodeScanner
-                      onRead={this.onSuccess.bind(this)}
-                      reactivate={true}
-                    />
-                  </View>
-                </View>
-              </Modal>
         </View>
         <ScrollView>
           <View style={styles.box2}>
-            <View style={styles.box5}>
-              <TextInput
-                placeholder="Barcode"
-                onChangeText={kode_obat => this.setState({ kode_obat })}
-                value={this.state.kode_obat}
-                style={styles.textInput2}
-              />
-              <TouchableOpacity
-                activeOpacity={0.5}
-                style={styles.qr}
-                onPress={() => {
-                  this.ShowModalFunction(true);
-                }}
-              >
-                <Icon name="camera-alt" color="black" size={20} />
-                <Text style={styles.text2}>Scan</Text>
-              </TouchableOpacity>
-            </View>
+            <TextInput
+              placeholder="Barcode"
+              onChangeText={kode_obat => this.setState({ kode_obat })}
+              value={this.state.kode_obat}
+              disabled
+              editable={false}
+              style={styles.textInput}
+            />
+
             <TextInput
               placeholder="Nama Obat"
               onChangeText={nama_obat => this.setState({ nama_obat })}
               style={styles.textInput}
+              value={this.state.nama_obat}
             />
             <TextInput
               placeholder="Jenis Obat"
               onChangeText={jenis_obat => this.setState({ jenis_obat })}
               style={styles.textInput}
+              value={this.state.jenis_obat}
             />
             <TextInput
               placeholder="Tanggal Expired (Tahun-Bulan-Tanggal)"
@@ -198,16 +174,19 @@ class TambahObat extends Component {
                 this.setState({ tanggal_expired })
               }
               style={styles.textInput}
+              value={this.state.tanggal_expired}
             />
             <TextInput
               placeholder="Stok Obat"
               onChangeText={stok_obat => this.setState({ stok_obat })}
               style={styles.textInput}
+              value={this.state.stok_obat}
             />
             <TextInput
               placeholder="Suplier Obat"
               onChangeText={suplier_obat => this.setState({ suplier_obat })}
               style={styles.textInput}
+              value={this.state.suplier_obat}
             />
           </View>
         </ScrollView>
@@ -215,14 +194,9 @@ class TambahObat extends Component {
           <TouchableOpacity
             activeOpacity={0.5}
             style={styles.buttonStyle}
-            onPress={() => this.props.navigation.navigate("Home")}>
-            <Text style={styles.text2}>Kembali</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={styles.buttonStyle}
-            onPress={() => this.submit()}>
-            <Text style={styles.text2}>Tambah</Text>
+            onPress={() => this.submit()}
+          >
+            <Text style={styles.text2}>Update</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -234,7 +208,7 @@ class TambahObat extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:"#FAFAD2",
+    backgroundColor: "#FAFAD2",
   },
   box1: {
     //borderWidth: 1,
@@ -272,7 +246,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   buttonStyle: {
-    backgroundColor:  "#F08080",
+    backgroundColor: "#F08080",
     height: 40,
     borderRadius: 5,
     alignItems: "center",
@@ -295,7 +269,7 @@ const styles = StyleSheet.create({
   },
   text2: {
     fontSize: 18,
-    color: "black"
+    color: "#fff"
   },
   image: {
     width: 150,
@@ -310,7 +284,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 30,
     marginRight: 30,
-    color:  "#F08080",
+    color: "#F08080",
     fontSize: 20
   },
   textInput: {
@@ -352,9 +326,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: "center",
     marginLeft: 20,
-    marginRight: 20,
-    flexDirection:"row",
-    justifyContent:"space-between"
+    marginRight: 20
   }
 });
-export default TambahObat;
+export default UpdateObat;

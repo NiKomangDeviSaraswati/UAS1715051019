@@ -10,12 +10,40 @@ import {
 } from "react-native";
 import Header from "./Header";
 const apotik = require("./img/apotik.png");
+const axios = require("axios");
 
 class Login extends Component {
     static navigationOptions = {
         header: null
     };
+    constructor(props) {
+        super(props);
+        this.state = {
+          username: "",
+          password: ""
+        };
+      }
+
     render() {
+        const { navigation } = this.props;
+        handleSubmit = event => {
+          axios
+            .post("https://deviundiksha.000webhostapp.com/apotik/login.php", {
+              username: this.state.username,
+              password: this.state.password
+            })
+            .then(function(response) {
+              console.log(response);
+              console.log("ini kode user", response.data.kode_user);
+              if (response.data.username == "devisaraswati") {
+                 navigation.navigate("Home", {
+                   kode_user: response.data.kode_user
+                 });
+              } else {
+                Alert.alert(response.data.pesan);
+              }
+            });
+        };
         return (
             <View style={styles.container}>
                 <Header judul={"LOGIN"} />
@@ -40,7 +68,7 @@ class Login extends Component {
                     <TouchableHighlight
                         activeOpacity={0.5}
                         style={styles.buttonStyle}
-                        onPress={() => this.props.navigation.navigate("Home")}
+                        onPress={handleSubmit.bind(this)}
                     >
                         <Text style={styles.text}>Masuk</Text>
                     </TouchableHighlight>
